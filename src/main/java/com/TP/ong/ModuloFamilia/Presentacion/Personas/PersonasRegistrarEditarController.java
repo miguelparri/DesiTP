@@ -4,18 +4,16 @@
  */
 
 package com.TP.ong.ModuloFamilia.Presentacion.Personas;
-import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-
 @Controller
-@Slf4j
 public class PersonasRegistrarEditarController {
- 
-  @GetMapping("/editarpersonas")
-     public String mostrarFormularioEditar(){
-       return "EditarPersonas";
-   }
+
+    @GetMapping("/editarpersonas")
+    public String mostrarFormularioEditar(Model model) {
+        model.addAttribute("mensajeeditar", "Editor de personas");
+        return "familias/editarpersonas";  // busca familias/editarpersonas.html
+    }
 }
-
-

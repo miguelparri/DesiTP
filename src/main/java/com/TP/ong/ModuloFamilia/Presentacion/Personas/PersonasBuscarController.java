@@ -4,17 +4,16 @@
  */
 
 package com.TP.ong.ModuloFamilia.Presentacion.Personas;
-
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
 @Controller
-@Slf4j
 public class PersonasBuscarController {
-    
+
     @GetMapping("/buscarpersonas")
-    public String mostrarFormularioBusqueda(){
-    return "BuscarPersonas";
-}
+    public String mostrarFormularioBusqueda(Model model) {
+        model.addAttribute("mensajebuscar", "Búsqueda de personas");
+        return "familias/buscarpersonas";  // busca familias/buscarpersonas.html
+    }
 }

@@ -7,9 +7,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 public class PersonasController {
 
-    @GetMapping("/personas")  // ruta en minúsculas para evitar problemas
-    public String mostrarPersonas(Model model) {
-        model.addAttribute("prueba", "prueba envio de datos");
-        return "personas";  // nombre del template Thymeleaf (personas.html)
-    }
+   @GetMapping("/personas")
+public String mostrarPersonas(Model model) {
+    model.addAttribute("prueba", "personas");
+    return "familias/personas";  // ← personas.html
+}
 }

@@ -1,4 +1,4 @@
-package com.TP.demo;
+package com.TP;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 
@@ -9,6 +9,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 public class ControladorRest {
     @GetMapping("/")
     public String comienzo() {
-        return "indice";  // Nombre de la plantilla sin extensión
+        return "indice";  
     }
 }
