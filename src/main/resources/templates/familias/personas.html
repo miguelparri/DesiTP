@@ -1,14 +1,70 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
 <head>
-    <title>Personas</title>
     <meta charset="UTF-8" />
+    <title>Gestión de Personas</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        table { border-collapse: collapse; width: 100%; margin-top: 20px; }
+        th, td { border: 1px solid #ccc; padding: 8px; }
+        th { background-color: #f4f4f4; }
+        nav a { margin-right: 10px; text-decoration: none; color: #0066cc; }
+        nav a:hover { text-decoration: underline; }
+        form { margin-bottom: 20px; }
+    </style>
 </head>
 <body>
-    <h1 th:text="${prueba}"></h1>
-  <a th:href="@{/personas}">Ir a Personas</a>
-    <a th:href="@{/buscarpersonas}">buscar Personas</a>
-        <a th:href="@{/editarpersonas}">Editar Personas</a>
-        <a th:href="@{/}">menu</a>
+
+    <h1 th:text="${mensajebuscar} ?: 'Buscar Personas'">Buscar Personas</h1>
+
+    <!-- Formulario de búsqueda -->
+    <form th:action="@{/buscarpersonas}" method="post" th:object="${formBean}">
+        <label for="nombre">Nombre:</label>
+        <input type="text" id="nombre" th:field="*{nombre}" placeholder="Ingrese nombre" />
+
+        <button type="submit" name="action" value="actionBuscar">Buscar</button>
+        <button type="submit" name="action" value="actionCancelar">Cancelar</button>
+        <button type="submit" name="action" value="actionRegistrar">Registrar</button>
+
+        <!-- Mostrar errores de validación dentro del formulario -->
+        <div th:if="${#fields.hasErrors('*')}">
+            <ul>
+                <li th:each="err : ${#fields.errors('*')}" th:text="${err}"></li>
+            </ul>
+        </div>
+    </form>
+
+    <!-- Tabla de resultados -->
+    <div th:if="${resultados != null}">
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>Apellido</th>
+                    <th>DNI</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="persona : ${resultados}">
+                    <td th:text="${persona.id}">1</td>
+                    <td th:text="${persona.nombre}">Nombre</td>
+                    <td th:text="${persona.apellido}">Apellido</td>
+                    <td th:text="${persona.dni}">12345678</td>
+                </tr>
+            </tbody>
+        </table>
+        <p th:if="${#lists.isEmpty(resultados)}">No se encontraron resultados.</p>
+    </div>
+
+    <hr/>
+
+    <nav>
+        <a th:href="@{/personas}">Personas</a> |
+        <a th:href="@{/buscarpersonas}">Buscar Personas</a> |
+        <a th:href="@{/editarpersonas}">Editar Personas</a> |
+        <a th:href="@{/}">Menú Principal</a>
+    </nav>
+
 </body>
 </html>
