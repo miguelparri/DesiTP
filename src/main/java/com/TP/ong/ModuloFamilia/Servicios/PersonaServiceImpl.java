@@ -11,7 +11,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.TP.ong.ModuloFamilia.AccesoDAO.IPersonaDao;  // ✅ nombre correcto
+import com.TP.ong.ModuloFamilia.AccesoDAO.IPersonaDao;
 import com.TP.ong.ModuloFamilia.Entidades.Personas;
 import com.TP.ong.ModuloFamilia.Presentacion.Personas.PersonasBuscarForm;
 import com.TP.ong.ModuloFamilia.Excepciones.Excepcion;
@@ -20,7 +20,7 @@ import com.TP.ong.ModuloFamilia.Excepciones.Excepcion;
 public class PersonaServiceImpl implements PersonaService {
 
     @Autowired
-    private IPersonaDao personaDao;  // ✅ corregido
+    private IPersonaDao personaDao;
 
     @Override
     public List<Personas> getAll() {
@@ -35,7 +35,7 @@ public class PersonaServiceImpl implements PersonaService {
     @Override
     public List<Personas> filter(PersonasBuscarForm filter) throws Excepcion {
         if (filter.getNombre() != null && !filter.getNombre().isEmpty()) {
-            return personaDao.findByNombreContainingIgnoreCase(filter.getNombre());
+            return personaDao.findByNombreContainingIgnoreCaseOrApellidoContainingIgnoreCase(filter.getNombre(), filter.getNombre());
         } else {
             return personaDao.findAll();
         }
@@ -49,5 +49,11 @@ public class PersonaServiceImpl implements PersonaService {
     @Override
     public void deleteById(Long id) {
         personaDao.deleteById(id);
+    }
+
+    @Override
+    public Integer generarNumeroFamilia() {
+        Integer max = personaDao.findMaxNumeroFamilia();
+        return (max == null) ? 1 : max + 1;
     }
 }

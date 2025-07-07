@@ -12,14 +12,12 @@ import java.util.List;
 
 @Repository
 public interface IPersonaDao extends JpaRepository<Personas, Long> {
-
-    Personas findByDni(String dni);
-
-    List<Personas> findByNombreContainingOrApellidoContaining(String nombre, String apellido);
+  
+     List<Personas> findByNombreContainingIgnoreCaseOrApellidoContainingIgnoreCase(String nombre, String apellido);
 
     @Query("SELECT p FROM Personas p WHERE p.nombre LIKE %:nombre% AND p.ocupacion = :ocupacion")
     List<Personas> buscarPorNombreYOcupacion(@Param("nombre") String nombre, @Param("ocupacion") String ocupacion);
 
-    // Aquí agregás el método que falta:
-    List<Personas> findByNombreContainingIgnoreCase(String nombre);
+    @Query("SELECT MAX(p.numeroFamilia) FROM Personas p")
+    Integer findMaxNumeroFamilia();
 }

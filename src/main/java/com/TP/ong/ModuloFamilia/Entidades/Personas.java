@@ -26,4 +26,5 @@ public class Personas implements Serializable {
     private LocalDate fechanacimiento;
     private String ocupacion;
     private String domicilio;
+    private Integer numeroFamilia;
 }

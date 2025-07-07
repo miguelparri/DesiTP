@@ -3,41 +3,71 @@
 <head>
     <meta charset="UTF-8" />
     <title>Gestión de Personas</title>
-    <style>
-        body { font-family: Arial, sans-serif; margin: 20px; }
-        table { border-collapse: collapse; width: 100%; margin-top: 20px; }
-        th, td { border: 1px solid #ccc; padding: 8px; }
-        th { background-color: #f4f4f4; }
-        nav a { margin-right: 10px; text-decoration: none; color: #0066cc; }
-        nav a:hover { text-decoration: underline; }
-        form { margin-bottom: 20px; }
-    </style>
-</head>
-<body>
 
-    <h1 th:text="${mensajebuscar} ?: 'Buscar Personas'">Buscar Personas</h1>
+
+    <link 
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" 
+        rel="stylesheet" 
+        integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3Bie0uZjrrpGzAvMw3J3CglE1Fu5dxW" 
+        crossorigin="anonymous"
+    />
+
+</head>
+
+
+<nav class="navbar navbar-expand-lg bg-body-tertiary fixed-top">
+  <div class="container-fluid">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb mb-0">
+        <li class="breadcrumb-item">
+          <a th:href="@{/}">Menú Principal</a>
+        </li>
+        <li class="breadcrumb-item">
+          <a th:href="@{/personas}">Personas</a>
+        </li>
+        <li class="breadcrumb-item">
+          <a th:href="@{/editarpersonas}">Editar Personas</a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">
+          <a th:href="@{/buscarpersonas}">Buscar Personas</a>
+        </li>
+      </ol>
+    </nav>
+  </div>
+</nav>
+
+
+<body class="container my-4">
+
+    <h1 th:text="${mensajebuscar} ?: 'Buscar Personas'" class="mb-4">Buscar Personas</h1>
 
     <!-- Formulario de búsqueda -->
-    <form th:action="@{/buscarpersonas}" method="post" th:object="${formBean}">
-        <label for="nombre">Nombre:</label>
-        <input type="text" id="nombre" th:field="*{nombre}" placeholder="Ingrese nombre" />
+    <form th:action="@{/buscarpersonas}" method="post" th:object="${formBean}" class="row g-3 mb-4">
+        <div class="col-md-6">
+            <label for="nombre" class="form-label">Nombre:</label>
+            <input type="text" id="nombre" th:field="*{nombre}" class="form-control" placeholder="Ingrese nombre" />
+        </div>
 
-        <button type="submit" name="action" value="actionBuscar">Buscar</button>
-        <button type="submit" name="action" value="actionCancelar">Cancelar</button>
-        <button type="submit" name="action" value="actionRegistrar">Registrar</button>
+        <div class="col-12 d-flex gap-2">
+            <button type="submit" name="action" value="actionBuscar" class="btn btn-primary">Buscar</button>
+            <button type="submit" name="action" value="actionCancelar" class="btn btn-secondary">Cancelar</button>
+            <button type="submit" name="action" value="actionRegistrar" class="btn btn-success">Registrar</button>
+        </div>
 
-        <!-- Mostrar errores de validación dentro del formulario -->
-        <div th:if="${#fields.hasErrors('*')}">
-            <ul>
-                <li th:each="err : ${#fields.errors('*')}" th:text="${err}"></li>
-            </ul>
+        <!-- Errores de validación -->
+        <div class="col-12" th:if="${#fields.hasErrors('*')}">
+            <div class="alert alert-danger">
+                <ul class="mb-0">
+                    <li th:each="err : ${#fields.errors('*')}" th:text="${err}"></li>
+                </ul>
+            </div>
         </div>
     </form>
 
     <!-- Tabla de resultados -->
     <div th:if="${resultados != null}">
-        <table>
-            <thead>
+        <table class="table table-bordered table-hover">
+            <thead class="table-light">
                 <tr>
                     <th>ID</th>
                     <th>Nombre</th>
@@ -54,17 +84,14 @@
                 </tr>
             </tbody>
         </table>
-        <p th:if="${#lists.isEmpty(resultados)}">No se encontraron resultados.</p>
+        <p th:if="${#lists.isEmpty(resultados)}" class="text-muted">No se encontraron resultados.</p>
     </div>
 
     <hr/>
 
-    <nav>
-        <a th:href="@{/personas}">Personas</a> |
-        <a th:href="@{/buscarpersonas}">Buscar Personas</a> |
-        <a th:href="@{/editarpersonas}">Editar Personas</a> |
-        <a th:href="@{/}">Menú Principal</a>
-    </nav>
+    <!-- Navegación -->
+   
 
+    
 </body>
 </html>

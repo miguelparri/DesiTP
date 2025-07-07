@@ -1,11 +1,89 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="UTF-8" />
     <title>Buscar Personas</title>
+
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}" />
 </head>
-<body>
- 
-   
+
+<body class="container" style="padding-top: 80px;"> <!-- Ajuste por navbar fija -->
+
+
+<nav class="navbar navbar-expand-lg bg-body-tertiary fixed-top">
+  <div class="container-fluid">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb mb-0">
+        <li class="breadcrumb-item">
+          <a th:href="@{/}">Menú Principal</a>
+        </li>
+        <li class="breadcrumb-item">
+          <a th:href="@{/personas}">Personas</a>
+        </li>
+        <li class="breadcrumb-item">
+          <a th:href="@{/editarpersonas}">Editar Personas</a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">
+          <a th:href="@{/buscarpersonas}">Buscar Personas</a>
+        </li>
+      </ol>
+    </nav>
+  </div>
+</nav>
+
+
+
+    <!-- Contenido -->
+    <h1 th:text="${mensajebuscar} ?: 'Buscar Personas'" class="mb-4">Buscar Personas</h1>
+
+    <!-- Formulario de búsqueda -->
+    <form th:action="@{/buscarpersonas}" method="post" th:object="${formBean}" class="row g-3">
+        <div class="col-md-6">
+            <label for="nombre" class="form-label">Nombre</label>
+            <input type="text" id="nombre" th:field="*{nombre}" class="form-control" placeholder="Ingrese nombre" />
+            <div th:if="${#fields.hasErrors('nombre')}" class="text-danger small" th:errors="*{nombre}"></div>
+        </div>
+
+        <div class="col-12">
+            <button type="submit" name="action" value="actionBuscar" class="btn btn-primary">Buscar</button>
+            <button type="submit" name="action" value="actionCancelar" class="btn btn-secondary">Cancelar</button>
+            <button type="submit" name="action" value="actionRegistrar" class="btn btn-success">Registrar</button>
+        </div>
+
+        <!-- Errores generales -->
+        <div class="col-12" th:if="${#fields.hasErrors('*')}">
+            <div class="alert alert-danger mt-3">
+                <ul class="mb-0">
+                    <li th:each="err : ${#fields.errors('*')}" th:text="${err}"></li>
+                </ul>
+            </div>
+        </div>
+    </form>
+
+    <!-- Resultados de búsqueda -->
+    <div th:if="${resultados != null}" class="mt-4">
+        <table class="table table-bordered table-striped">
+            <thead class="table-light">
+                <tr>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>Apellido</th>
+                    <th>DNI</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="persona : ${resultados}">
+                    <td th:text="${persona.id}">1</td>
+                    <td th:text="${persona.nombre}">Nombre</td>
+                    <td th:text="${persona.apellido}">Apellido</td>
+                    <td th:text="${persona.dni}">12345678</td>
+                </tr>
+            </tbody>
+        </table>
+        <p th:if="${#lists.isEmpty(resultados)}" class="text-muted">No se encontraron resultados.</p>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+            crossorigin="anonymous"></script>
 </body>
 </html>

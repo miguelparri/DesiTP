@@ -8,9 +8,9 @@ public class FamiliaBuscarForm {
     
     private String nombreFamilia;
     private String direccion;
-    private Long idPersona;  // <-- Nuevo atributo
+    private Long idPersona;  
 
-    // Getters y Setters
+
     public String getNombreFamilia() {
         return nombreFamilia;
     }
