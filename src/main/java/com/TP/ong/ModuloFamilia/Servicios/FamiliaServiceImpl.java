@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 
 package com.TP.ong.ModuloFamilia.Servicios;
 import com.TP.ong.ModuloFamilia.Presentacion.Familias.FamiliaBuscarForm;
@@ -33,9 +29,6 @@ public class FamiliaServiceImpl implements FamiliaService {
 
     @Override
     public List<Familias> filter(FamiliaBuscarForm filter) throws Excepcion {
-        // Aquí vas a definir tu lógica de filtro, por ejemplo:
-        // buscar por nombreFamilia o persona.id, etc.
-        // Por ejemplo, podrías usar los métodos custom de IFamiliaRepo que definiste:
         if (filter.getNombreFamilia() != null && !filter.getNombreFamilia().isEmpty()) {
             return familiaRepo.findByNombreOrIdPersona(filter.getNombreFamilia(), filter.getIdPersona());
         }
@@ -49,7 +42,8 @@ public class FamiliaServiceImpl implements FamiliaService {
 
     @Override
     public void save(Familias familia) throws Excepcion {
-        // Podés validar antes de guardar si querés.
         familiaRepo.save(familia);
     }
+
+   
 }

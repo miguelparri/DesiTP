@@ -8,9 +8,11 @@ package com.TP.ong.ModuloFamilia.Presentacion.Personas;
 public class PersonasBuscarForm {
     private String nombre;
     private String apellido;
-    // Agregar otros filtros si necesitás
+    private String dni;
 
-    // getters y setters
+    
+
+   
     public String getNombre() {
         return (nombre != null && !nombre.isEmpty()) ? nombre : null;
     }
@@ -23,4 +25,8 @@ public class PersonasBuscarForm {
     public void setApellido(String apellido) {
         this.apellido = apellido;
     }
+    public String getDni() { return dni; 
+    }   
+    public void setDni(String dni) { this.dni = dni; 
+    }  
 }

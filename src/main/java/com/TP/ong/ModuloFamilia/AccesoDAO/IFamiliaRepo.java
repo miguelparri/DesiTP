@@ -21,5 +21,5 @@ public interface IFamiliaRepo extends JpaRepository<Familias, Long> {
     
     
     @Query("SELECT MAX(f.numeroFamilia) FROM Familias f")
-    Integer findMaxNumeroFamilia();
+    Long findMaxNumeroFamilia();
 }

@@ -6,7 +6,6 @@
 package com.TP.ong.ModuloFamilia.Servicios;
 
 import java.util.List;
-
 import com.TP.ong.ModuloFamilia.Entidades.Personas;
 import com.TP.ong.ModuloFamilia.Presentacion.Personas.PersonasBuscarForm;
 import com.TP.ong.ModuloFamilia.Excepciones.Excepcion;
@@ -23,5 +22,6 @@ public interface PersonaService {
 
     void deleteById(Long id);
 
-    Integer generarNumeroFamilia();
+    Long generarNumeroFamilia();
+
 }

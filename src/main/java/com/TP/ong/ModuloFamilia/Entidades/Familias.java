@@ -26,5 +26,5 @@ public class Familias {
     private Personas persona;
 
     @Column(unique = true)
-    private Integer numeroFamilia;
+    private Long numeroFamilia;
 }

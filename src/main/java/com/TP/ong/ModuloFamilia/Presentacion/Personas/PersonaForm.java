@@ -1,41 +1,38 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
-
 package com.TP.ong.ModuloFamilia.Presentacion.Personas;
 
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+
 import com.TP.ong.ModuloFamilia.Entidades.Personas;
 
 public class PersonaForm {
 
     private Long id;
 
-    @NotNull
+    @NotBlank(message = "El DNI es obligatorio")
     private String dni;
 
-    @NotNull
+    @NotBlank(message = "El nombre es obligatorio")
     private String nombre;
 
-    @NotNull
+    @NotBlank(message = "El apellido es obligatorio")
     private String apellido;
 
-    @NotNull
+    @NotNull(message = "La fecha de nacimiento es obligatoria")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date fechanacimiento;
 
-    @NotNull
+    @NotBlank(message = "La ocupación es obligatoria")
     private String ocupacion;
 
-    @NotNull
+    @NotBlank(message = "El domicilio es obligatorio")
     private String domicilio;
 
+    
     private Long numeroFamilia; 
 
     public PersonaForm() {
@@ -47,10 +44,14 @@ public class PersonaForm {
         this.dni = p.getDni();
         this.nombre = p.getNombre();
         this.apellido = p.getApellido();
-        this.fechanacimiento = java.sql.Date.valueOf(p.getFechanacimiento()); 
+        if (p.getFechanacimiento() != null) {
+            this.fechanacimiento = java.sql.Date.valueOf(p.getFechanacimiento());
+        }
         this.ocupacion = p.getOcupacion();
         this.domicilio = p.getDomicilio();
-        
+
+        // Asignamos directamente porque son ambos Long o null.
+        this.numeroFamilia = p.getNumeroFamilia();
     }
 
     public Personas toPojo() {
@@ -64,7 +65,10 @@ public class PersonaForm {
         }
         p.setOcupacion(this.getOcupacion());
         p.setDomicilio(this.getDomicilio());
-      
+
+        // Directamente asignamos Long
+        p.setNumeroFamilia(this.numeroFamilia);
+
         return p;
     }
 

@@ -20,11 +20,12 @@ public class PersonasBuscarController {
     private PersonaService personaService;
 
     @GetMapping
-    public String mostrarFormularioBusqueda(Model model) {
-        model.addAttribute("formBean", new PersonasBuscarForm());
-        model.addAttribute("mensajebuscar", "Búsqueda de personas");
-        return "familias/buscarpersonas";
-    }
+public String mostrarFormularioBusqueda(Model model) {
+    model.addAttribute("formBean", new PersonasBuscarForm());
+    model.addAttribute("mensajebuscar", "Búsqueda de personas");
+    model.addAttribute("resultados", personaService.getAll());
+    return "familias/buscarpersonas";
+}
 
     @PostMapping
 public String procesarBusqueda(
@@ -39,7 +40,7 @@ public String procesarBusqueda(
         }
 
         try {
-            List<Personas> resultados = personaService.filter(formBean);  // <- cambio aquí
+            List<Personas> resultados = personaService.filter(formBean);  
             model.addAttribute("resultados", resultados);
         } catch (Exception e) {
             result.reject("error.global", e.getMessage());
@@ -55,4 +56,7 @@ public String procesarBusqueda(
 
     return "redirect:/";
 }
+
+
+
 }
