@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <title>Listado de Recetas</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="#">Gestión ONG</a>
+  </div>
+</nav>
+
+<!-- MAIN -->
+<main class="container mt-5 pt-5">
+  <h2>Listado de Recetas</h2>
+
+  <!-- Formulario de filtro -->
+  <form th:action="@{/recetas}" method="get" class="row g-3 mt-3 mb-4">
+    <div class="col-md-3">
+      <input type="text" name="nombre" class="form-control" placeholder="Nombre de receta"
+             th:value="${nombreFiltro}">
+    </div>
+    <div class="col-md-2">
+      <input type="number" name="caloriasMin" class="form-control" placeholder="Calorías mín"
+             th:value="${caloriasMin}">
+    </div>
+    <div class="col-md-2">
+      <input type="number" name="caloriasMax" class="form-control" placeholder="Calorías máx"
+             th:value="${caloriasMax}">
+    </div>
+    <div class="col-md-5 d-flex">
+      <button type="submit" class="btn btn-primary me-2">Filtrar</button>
+      <a th:href="@{/recetas}" class="btn btn-secondary me-2">Limpiar</a>
+      <a th:href="@{/recetas/nueva}" class="btn btn-success">Nueva Receta</a>
+    </div>
+  </form>
+
+  <!-- Tabla de resultados -->
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Nombre</th>
+        <th>Calorías Totales</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr th:each="receta, iter : ${recetas}">
+        <td th:text="${iter.index + 1}">1</td>
+        <td th:text="${receta.nombre}">Nombre</td>
+        <td th:text="${receta.caloriasTotales}">0</td>
+        <td>
+          <a th:href="@{'/recetas/editar/' + ${receta.id}}" class="btn btn-warning btn-sm">Editar</a>
+          <a th:href="@{'/recetas/eliminar/' + ${receta.id}}" class="btn btn-danger btn-sm"
+             onclick="return confirm('¿Estás seguro de que deseas eliminar esta receta?')">Eliminar</a>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</main>
+
+</body>
+</html>
