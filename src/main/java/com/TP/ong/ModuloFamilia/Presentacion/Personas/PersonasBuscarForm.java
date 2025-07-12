@@ -9,8 +9,7 @@ public class PersonasBuscarForm {
     private String nombre;
     private String apellido;
     private String dni;
-
-    
+    private Long numeroFamilia;
 
    
     public String getNombre() {

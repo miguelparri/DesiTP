@@ -24,4 +24,6 @@ public interface IPersonaDao extends JpaRepository<Personas, Long>
     List<Personas> findByNombreContainingIgnoreCaseAndApellidoContainingIgnoreCaseAndDniContaining(String nombre, String apellido, String dni);
 
     Personas findByDni(String dni);
+    
+    List<Personas> findByNumeroFamilia(Long numeroFamilia);
 }

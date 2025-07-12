@@ -40,7 +40,6 @@ public class PersonaServiceImpl implements PersonaService {
         Personas personaExistente = personaDao.findByDni(persona.getDni());
 
         if (personaExistente != null) {
-            // Si es nuevo o está intentando modificar el DNI a uno que ya existe en otra persona
             if (persona.getId() == null || !personaExistente.getId().equals(persona.getId())) {
                 throw new Excepcion("Ya existe una persona con ese DNI.");
             }
@@ -59,5 +58,15 @@ public class PersonaServiceImpl implements PersonaService {
         Long max = personaDao.findMaxNumeroFamilia();
         return (max == null) ? 1 : max + 1;
     }
-}
 
+    @Override
+    public List<Personas> findByNumeroFamilia(Long numeroFamilia) {
+        return personaDao.findByNumeroFamilia(numeroFamilia);
+    }
+
+    @Override
+    public void deleteByNumeroFamilia(Long numeroFamilia) {
+        List<Personas> integrantes = personaDao.findByNumeroFamilia(numeroFamilia);
+        personaDao.deleteAll(integrantes);
+    }
+}

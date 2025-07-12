@@ -20,7 +20,7 @@ public class PersonasRegistrarEditarController {
         this.personaService = personaService;
     }
 
-    // Mostrar formulario para nueva persona — usa template registrar
+    // Mostrar formulario para nueva persona
     @GetMapping("/personas/nueva")
     public String mostrarFormularioNueva(Model model) {
         if (!model.containsAttribute("persona")) {
@@ -30,7 +30,7 @@ public class PersonasRegistrarEditarController {
         return "familias/agregarpersonas";  
     }
 
-    // Mostrar formulario para editar persona — usa template editar
+    // Mostrar formulario para editar persona 
     @GetMapping("/personas/editar/{id}")
 public String mostrarFormularioEditar(@PathVariable Long id, Model model) {
     Personas persona = personaService.getById(id);

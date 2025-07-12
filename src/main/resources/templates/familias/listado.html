@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>Listado de Familias</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+
+    <!-- MDBootstrap CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.1/mdb.min.css" rel="stylesheet" />
+
+    <!-- Font Awesome -->
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+
+    <style>
+        .btn-square {
+            width: 100%;
+            aspect-ratio: 1 / 1;
+            border-radius: 20px;
+            transition: transform 0.3s, box-shadow 0.3s;
+            font-size: 2rem;
+            font-weight: bold;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .btn-square:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+        }
+
+        .btn-familias {
+            background-color: #007bff;
+        }
+
+        .btn-personas {
+            background-color: #28a745;
+        }
+    </style>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="#">Gestión ONG</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+                <li class="nav-item"><a class="nav-link" th:href="@{/}">Menu</a></li>
+                <li class="nav-item"><a class="nav-link" th:href="@{/familias/listado}">Buscar Familias</a></li>
+                <li class="nav-item"><a class="nav-link" th:href="@{/buscarpersonas}">Buscar Personas</a></li>
+                <li class="nav-item"><a class="nav-link" th:href="@{/personas/nueva}">Agregar Personas</a></li>
+                <li class="nav-item"><a class="nav-link" th:href="@{/recetas/crear}">Crear Receta</a></li>
+                <li class="nav-item"><a class="nav-link" th:href="@{/recetas/listar}">Listar Recetas</a></li>
+                <li class="nav-item"><a class="nav-link" th:href="@{/recetas/modificar}">Modificar Receta</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+    <!-- Formulario de búsqueda -->
+   <main class="container mt-5 pt-5">
+    <h2>Listado de Familias Registradas</h2>
+    <form th:action="@{/familias/listado}" method="get" class="row g-3 align-items-center mb-4">
+        <div class="col-auto">
+            <label for="numero" class="col-form-label">Número de Familia:</label>
+        </div>
+        <div class="col-auto">
+            <input type="text" id="numero" name="numero" class="form-control" placeholder="Ej: 123"
+                   th:value="${param.numero}" />
+        </div>
+        <div class="col-auto">
+            <button type="submit" class="btn btn-primary mb-3">Buscar</button>
+            <a th:href="@{/familias/listado}" class="btn btn-secondary mb-3">Restablecer</a>
+            <a th:href="@{/personas/nueva}" class="btn btn-success mb-3">Registrar Nueva Persona</a>
+        </div>
+    </form>
+
+
+    <table class="table table-hover mt-4">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Número de Familia</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="numFam, iterStat : ${numerosDeFamilia}">
+                <td th:text="${iterStat.index + 1}">1</td>
+                <td th:text="${numFam}">123</td>
+                <td>
+                    <a th:href="@{|/familias/ver/${numFam}|}" class="btn btn-primary btn-sm">Ver Integrantes</a>
+                    <form th:action="@{'/familias/borrar/' + ${numFam}}" method="post"
+                          onsubmit="return confirm('¿Seguro que querés eliminar toda la familia completa? Esta acción no se puede deshacer.')">
+                        <button type="submit" class="btn btn-danger mb-3">Borrar Familia Completa</button>
+                    </form>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</main>
+
+<!-- FOOTER -->
+<footer class="text-center text-lg-start text-white" style="background-color: #1c2331;">
+    <section class="d-flex justify-content-between p-4" style="background-color: #6351ce;">
+        <div class="me-5">
+            <a class="text-white" href="https://www.frsf.utn.edu.ar/tuti" target="_blank" rel="noopener noreferrer">
+                Tecnicatura Universitaria en Tecnología de la Información
+            </a>
+        </div>
+        <div>
+            <a href="#" class="text-white me-4"><i class="fab fa-facebook-f"></i></a>
+            <a href="#" class="text-white me-4"><i class="fab fa-twitter"></i></a>
+            <a href="#" class="text-white me-4"><i class="fab fa-google"></i></a>
+            <a href="#" class="text-white me-4"><i class="fab fa-instagram"></i></a>
+            <a href="#" class="text-white me-4"><i class="fab fa-linkedin"></i></a>
+            <a href="#" class="text-white me-4"><i class="fab fa-github"></i></a>
+        </div>
+    </section>
+
+    <section>
+        <div class="container text-center text-md-start mt-5">
+            <div class="row mt-3">
+                <div class="col-md-3 col-lg-4 col-xl-3 mx-auto mb-4">
+                    <h6 class="text-uppercase fw-bold">ONG</h6>
+                    <hr class="mb-4 mt-0 d-inline-block mx-auto"
+                        style="width: 60px; background-color: #7c4dff; height: 2px" />
+                    <p>Trabajo practico de la UTN Realizado por Parra Miguel Angel y Brian Villalba</p>
+                </div>
+
+                <div class="col-md-2 col-lg-2 col-xl-2 mx-auto mb-4">
+                    <h6 class="text-uppercase fw-bold">Integrantes</h6>
+                    <hr class="mb-4 mt-0 d-inline-block mx-auto"
+                        style="width: 60px; background-color: #7c4dff; height: 2px" />
+                    <p><a class="text-white">Parra Miguel Angel</a></p>
+                    <p><a class="text-white">Brian Elias Villalba</a></p>
+                </div>
+
+                <div class="col-md-3 col-lg-2 col-xl-2 mx-auto mb-4">
+                    <h6 class="text-uppercase fw-bold">Links</h6>
+                    <hr class="mb-4 mt-0 d-inline-block mx-auto"
+                        style="width: 60px; background-color: #7c4dff; height: 2px" />
+                    <p><a href="#!" class="text-white">Menu</a></p>
+                    <p><a href="#!" class="text-white">Personas</a></p>
+                    <p><a href="#!" class="text-white">Producto</a></p>
+                </div>
+
+                <div class="col-md-4 col-lg-3 col-xl-3 mx-auto mb-md-0 mb-4">
+                    <h6 class="text-uppercase fw-bold">Contacto</h6>
+                    <hr class="mb-4 mt-0 d-inline-block mx-auto"
+                        style="width: 60px; background-color: #7c4dff; height: 2px" />
+                    <p><i class="fas fa-home mr-3"></i> Lavaisse 610 - S3004EWB Santa Fe</p>
+                    <p><i class="fas fa-envelope mr-3"></i> Parramiguelangel@hotmail.com.ar</p>
+                    <p><i class="fas fa-envelope mr-3"></i> briancorreo</p>
+                    <p><i class="fas fa-phone mr-3"></i> +54 342 547 6892</p>
+                    <p><i class="fas fa-print mr-3"></i> +54 342 506 9163</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="text-center p-3" style="background-color: rgba(0, 0, 0, 0.2);">
+        <a class="text-white" href="https://www.frsf.utn.edu.ar/" target="_blank" rel="noopener noreferrer">frsf.utn.edu.ar</a>
+    </div>
+</footer>
+
+<!-- Bootstrap Bundle -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- MDBootstrap JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.1/mdb.min.js"></script>
+
+</body>
+</html>

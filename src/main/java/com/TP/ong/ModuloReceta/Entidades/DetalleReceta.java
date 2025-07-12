@@ -1,11 +1,9 @@
 package com.TP.ong.ModuloReceta.Entidades;
 
 import jakarta.persistence.*;
-import lombok.Data;
 
 @Entity
 @Table(name = "DetalleReceta")
-@Data
 public class DetalleReceta {
 
     @Id
@@ -22,4 +20,46 @@ public class DetalleReceta {
 
     private double cantidad; // en kg
     private int calorias;    // enteros positivos
+
+    // Getters y setters
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Receta getReceta() {
+        return receta;
+    }
+
+    public void setReceta(Receta receta) {
+        this.receta = receta;
+    }
+
+    public Ingrediente getIngrediente() {
+        return ingrediente;
+    }
+
+    public void setIngrediente(Ingrediente ingrediente) {
+        this.ingrediente = ingrediente;
+    }
+
+    public double getCantidad() {
+        return cantidad;
+    }
+
+    public void setCantidad(double cantidad) {
+        this.cantidad = cantidad;
+    }
+
+    public int getCalorias() {
+        return calorias;
+    }
+
+    public void setCalorias(int calorias) {
+        this.calorias = calorias;
+    }
 }
