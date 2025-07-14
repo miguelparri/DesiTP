@@ -1,0 +1,102 @@
+!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <title th:text="${titulo}">Formulario Receta</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="#">Gestión ONG</a>
+  </div>
+</nav>
+
+<!-- FORMULARIO -->
+<div class="container mt-5 pt-5">
+  <h2 th:text="${titulo}">Formulario de Receta</h2>
+
+  <!-- Mensajes -->
+  <div th:if="${mensaje}" class="alert alert-success" th:text="${mensaje}"></div>
+  <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+
+  <form th:action="@{/recetas/guardar}" th:object="${formBean}" method="post">
+    <input type="hidden" th:field="*{id}" />
+
+    <div class="form-outline mb-4">
+      <input type="text" th:field="*{nombre}" class="form-control" required />
+      <label class="form-label">Nombre de la Receta</label>
+    </div>
+
+    <div class="form-outline mb-4">
+      <textarea th:field="*{descripcion}" class="form-control" rows="4"></textarea>
+      <label class="form-label">Descripción</label>
+    </div>
+
+    <!-- INGREDIENTES -->
+    <h5>Ingredientes</h5>
+    <table class="table table-bordered" id="tablaIngredientes">
+      <thead>
+        <tr>
+          <th>Ingrediente</th>
+          <th>Cantidad (kg)</th>
+          <th>Calorías</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody id="ingredientesBody">
+        <tr>
+          <td>
+            <select class="form-select" name="ingredientes[0].ingredienteId" required>
+              <option value="">Seleccione...</option>
+              <option th:each="ing : ${ingredientes}"
+                      th:value="${ing.id}"
+                      th:text="${ing.nombre}">
+              </option>
+            </select>
+          </td>
+          <td><input type="number" name="ingredientes[0].cantidad" class="form-control" step="0.01" min="0" required /></td>
+          <td><input type="number" name="ingredientes[0].calorias" class="form-control" min="0" required /></td>
+          <td><button type="button" class="btn btn-danger" onclick="eliminarFila(this)">Eliminar</button></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <button type="button" class="btn btn-secondary mb-3" onclick="agregarFila()">Agregar Ingrediente</button>
+
+    <div class="d-flex justify-content-center mb-4">
+      <button type="submit" class="btn btn-primary">Guardar Receta</button>
+    </div>
+  </form>
+</div>
+
+<script>
+  let index = 1;
+  function agregarFila() {
+    const tabla = document.getElementById('ingredientesBody');
+    const fila = document.createElement('tr');
+    fila.innerHTML = `
+      <td>
+        <select class="form-select" name="ingredientes[${index}].ingredienteId" required>
+          <option value="">Seleccione...</option>
+          [[${#lists.map(ingredientes, i -> '<option value="' + i.id + '">' + i.nombre + '</option>').join('')}]]
+        </select>
+      </td>
+      <td><input type="number" name="ingredientes[${index}].cantidad" class="form-control" step="0.01" min="0" required /></td>
+      <td><input type="number" name="ingredientes[${index}].calorias" class="form-control" min="0" required /></td>
+      <td><button type="button" class="btn btn-danger" onclick="eliminarFila(this)">Eliminar</button></td>
+    `;
+    tabla.appendChild(fila);
+    index++;
+  }
+
+  function eliminarFila(boton) {
+    const fila = boton.parentElement.parentElement;
+    fila.remove();
+  }
+</script>
+
+</body>
+</html>

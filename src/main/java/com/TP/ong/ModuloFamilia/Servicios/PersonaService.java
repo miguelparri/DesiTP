@@ -1,9 +1,10 @@
 package com.TP.ong.ModuloFamilia.Servicios;
 
-import java.util.List;
 import com.TP.ong.ModuloFamilia.Entidades.Personas;
 import com.TP.ong.ModuloFamilia.Presentacion.Personas.PersonasBuscarForm;
 import com.TP.ong.ModuloFamilia.Excepciones.Excepcion;
+
+import java.util.List;
 
 public interface PersonaService {
 
@@ -21,6 +22,5 @@ public interface PersonaService {
 
     List<Personas> findByNumeroFamilia(Long numeroFamilia);
 
-    
     void deleteByNumeroFamilia(Long numeroFamilia);
 }

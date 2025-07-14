@@ -26,4 +26,6 @@ public interface IPersonaDao extends JpaRepository<Personas, Long>
     Personas findByDni(String dni);
     
     List<Personas> findByNumeroFamilia(Long numeroFamilia);
+    @Query("SELECT p FROM Personas p WHERE p.numeroFamilia = :numeroFamilia ORDER BY p.id ASC")
+    List<Personas> findByNumeroFamiliaOrderByIdAsc(@Param("numeroFamilia") Long numeroFamilia);
 }

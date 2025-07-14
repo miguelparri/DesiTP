@@ -7,8 +7,8 @@ import java.time.LocalDate;
 public class Personas {
 
     @Id
-@GeneratedValue(strategy = GenerationType.IDENTITY)
-private Long id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     private String dni;
     private String nombre;
@@ -16,10 +16,8 @@ private Long id;
     private LocalDate fechanacimiento;
     private String ocupacion;
     private String domicilio;
-
     private Long numeroFamilia;
-
-    // Getters y Setters
+    private String nombreFamilia;
 
     public Long getId() {
         return id;
@@ -75,5 +73,13 @@ private Long id;
     }
     public void setNumeroFamilia(Long numeroFamilia) {
         this.numeroFamilia = numeroFamilia;
+    }
+
+ 
+    public String getNombreFamilia() {
+        return nombreFamilia;
+    }
+    public void setNombreFamilia(String nombreFamilia) {
+        this.nombreFamilia = nombreFamilia;
     }
 }

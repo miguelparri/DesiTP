@@ -26,14 +26,15 @@ public class PersonaForm {
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date fechanacimiento;
 
-    @NotBlank(message = "La ocupación es obligatoria")
+   
     private String ocupacion;
 
-    @NotBlank(message = "El domicilio es obligatorio")
     private String domicilio;
 
-    
-    private Long numeroFamilia; 
+    private Long numeroFamilia;
+
+  
+    private String nombreFamilia;
 
     public PersonaForm() {
         super();
@@ -49,30 +50,28 @@ public class PersonaForm {
         }
         this.ocupacion = p.getOcupacion();
         this.domicilio = p.getDomicilio();
-
-        // Asignamos directamente porque son ambos Long o null.
         this.numeroFamilia = p.getNumeroFamilia();
+        this.nombreFamilia = null; // Se asigna en lógica de controlador
     }
 
-    public Personas toPojo() {
-        Personas p = new Personas();
-        p.setId(this.getId());
-        p.setDni(this.getDni());
-        p.setNombre(this.getNombre());
-        p.setApellido(this.getApellido());
-        if (this.fechanacimiento != null) {
-            p.setFechanacimiento(new java.sql.Date(this.fechanacimiento.getTime()).toLocalDate());
-        }
-        p.setOcupacion(this.getOcupacion());
-        p.setDomicilio(this.getDomicilio());
-
-        // Directamente asignamos Long
-        p.setNumeroFamilia(this.numeroFamilia);
-
-        return p;
+   public Personas toPojo() {
+    Personas p = new Personas();
+    p.setId(this.getId());
+    p.setDni(this.getDni());
+    p.setNombre(this.getNombre());
+    p.setApellido(this.getApellido());
+    if (this.fechanacimiento != null) {
+        p.setFechanacimiento(new java.sql.Date(this.fechanacimiento.getTime()).toLocalDate());
     }
+    p.setOcupacion(this.getOcupacion());
+    p.setDomicilio(this.getDomicilio());
+    p.setNumeroFamilia(this.numeroFamilia);
+    p.setNombreFamilia(this.getNombreFamilia());  // <--- esta línea faltaba
+    return p;
+}
 
-    // Getters y setters
+
+
 
     public Long getId() {
         return id;
@@ -136,5 +135,13 @@ public class PersonaForm {
 
     public void setNumeroFamilia(Long numeroFamilia) {
         this.numeroFamilia = numeroFamilia;
+    }
+
+    public String getNombreFamilia() {
+        return nombreFamilia;
+    }
+
+    public void setNombreFamilia(String nombreFamilia) {
+        this.nombreFamilia = nombreFamilia;
     }
 }

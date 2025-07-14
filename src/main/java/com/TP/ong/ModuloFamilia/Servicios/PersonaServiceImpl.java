@@ -69,4 +69,10 @@ public class PersonaServiceImpl implements PersonaService {
         List<Personas> integrantes = personaDao.findByNumeroFamilia(numeroFamilia);
         personaDao.deleteAll(integrantes);
     }
+
+ 
+    public boolean existeNumeroFamilia(Long numeroFamilia) {
+        List<Personas> integrantes = personaDao.findByNumeroFamilia(numeroFamilia);
+        return integrantes != null && !integrantes.isEmpty();
+    }
 }
