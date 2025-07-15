@@ -6,15 +6,16 @@ import com.TP.ong.ModuloReceta.Entidades.Receta;
 import com.TP.ong.ModuloReceta.Servicios.RecetaService;
 import com.TP.ong.ModuloReceta.AccesoDAO.IIngredienteDAO;
 import com.TP.ong.ModuloReceta.AccesoDAO.IRecetaRepo;
-import jakarta.validation.Valid;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/recetas")
@@ -25,109 +26,179 @@ public class RecetasController {
     private final IIngredienteDAO ingredienteDAO;
     private final IRecetaRepo recetaRepo;
 
-    // Mostrar formulario de alta
+
     @GetMapping("/nueva")
     public String mostrarFormularioNuevaReceta(Model model) {
-        RecetaDTO recetaForm = new RecetaDTO();
-        recetaForm.getIngredientes().add(new DetalleRecetaDTO()); // mínimo un ingrediente
-
-        model.addAttribute("recetaForm", recetaForm);
-        model.addAttribute("ingredientesDisponibles", ingredienteDAO.findAll());
+        if (!model.containsAttribute("formBean")) {
+            RecetaDTO formBean = new RecetaDTO();
+            formBean.getIngredientes().add(new DetalleRecetaDTO()); // al menos 1 ingrediente
+            model.addAttribute("formBean", formBean);
+        }
         return "recetas/crear";
     }
 
-    // Guardar receta nueva
+
     @PostMapping("/guardar")
-    public String guardarReceta(@ModelAttribute RecetaDTO recetaForm) {
-        Receta receta = new Receta();
-        receta.setNombre(recetaForm.getNombre());
-        receta.setDescripcion(recetaForm.getDescripcion());
+    public String guardarReceta(@ModelAttribute("formBean") RecetaDTO formBean, RedirectAttributes redirectAttributes) {
+        try {
+            Receta receta = new Receta();
+            receta.setNombre(formBean.getNombre());
+            receta.setDescripcion(formBean.getDescripcion());
 
-        List<DetalleReceta> detalles = recetaForm.getIngredientes().stream().map(f -> {
-            DetalleReceta dr = new DetalleReceta();
-            dr.setIngrediente(ingredienteDAO.findById(f.getIngredienteId()).orElse(null));
-            dr.setCantidad(f.getCantidad());
-            dr.setCalorias(f.getCalorias());
-            return dr;
-        }).toList();
+            List<DetalleReceta> detalles = formBean.getIngredientes().stream().map(f -> {
+                DetalleReceta dr = new DetalleReceta();
 
-        receta.setDetalles(detalles);
-        recetaService.crearReceta(receta);
-        return "redirect:/recetas/listar";
-    }
+                Ingrediente ingrediente = ingredienteDAO.findByNombre(f.getIngredienteNombre())
+                        .orElseGet(() -> {
+                            Ingrediente nuevo = new Ingrediente();
+                            nuevo.setNombre(f.getIngredienteNombre());
+                            return ingredienteDAO.save(nuevo);
+                        });
 
-    // Listar recetas
-    @GetMapping("/listar")
-    public String listarRecetas(@ModelAttribute("busqueda") RecetaBuscarForm busqueda, Model model) {
-        List<Receta> recetas;
+                dr.setIngrediente(ingrediente);
+                dr.setCantidad(f.getCantidad());
+                dr.setCalorias(f.getCalorias());
+                dr.setReceta(receta);
+                return dr;
+            }).collect(Collectors.toList());
 
-        if ((busqueda.getNombre() != null && !busqueda.getNombre().isEmpty()) ||
-            (busqueda.getMinCalorias() != null && busqueda.getMaxCalorias() != null)) {
-            int min = busqueda.getMinCalorias() != null ? busqueda.getMinCalorias() : 0;
-            int max = busqueda.getMaxCalorias() != null ? busqueda.getMaxCalorias() : Integer.MAX_VALUE;
-            recetas = recetaService.filtrarPorCalorias(min, max);
-        } else {
-            recetas = recetaService.listarRecetas();
+            receta.setDetalles(detalles);
+
+            recetaService.crearReceta(receta);
+
+            redirectAttributes.addFlashAttribute("mensaje", "Receta guardada correctamente");
+            return "redirect:/recetas/listar";
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Error al guardar la receta: " + e.getMessage());
+            redirectAttributes.addFlashAttribute("formBean", formBean);
+            return "redirect:/recetas/nueva";
         }
-
-        model.addAttribute("recetas", recetas);
-        return "recetas/listar";
     }
 
-    // Eliminar (lógica) receta
-    @GetMapping("/eliminar/{id}")
-    public String eliminarReceta(@PathVariable Long id) {
-        recetaService.eliminarReceta(id);
-        return "redirect:/recetas/listar";
-    }
 
-    // Mostrar formulario de edición
     @GetMapping("/editar/{id}")
     public String editarReceta(@PathVariable Long id, Model model) {
         Receta receta = recetaRepo.findById(id).orElse(null);
         if (receta == null) return "redirect:/recetas/listar";
 
-        RecetaDTO form = new RecetaDTO();
-        form.setId(receta.getId());
-        form.setNombre(receta.getNombre()); // read-only
-        form.setDescripcion(receta.getDescripcion());
+        RecetaDTO formBean = new RecetaDTO();
+        formBean.setId(receta.getId());
+        formBean.setNombre(receta.getNombre());
+        formBean.setDescripcion(receta.getDescripcion());
 
         receta.getDetalles().forEach(d -> {
-            DetalleRecetaDTO f = new DetalleRecetaDTO();
-            f.setIngredienteId(d.getIngrediente().getId());
-            f.setCantidad(d.getCantidad());
-            f.setCalorias(d.getCalorias());
-            form.getIngredientes().add(f);
+            DetalleRecetaDTO detalleDTO = new DetalleRecetaDTO();
+            detalleDTO.setIngredienteNombre(d.getIngrediente().getNombre());
+            detalleDTO.setCantidad(d.getCantidad());
+            detalleDTO.setCalorias(d.getCalorias());
+            formBean.getIngredientes().add(detalleDTO);
         });
 
-        model.addAttribute("recetaForm", form);
-        model.addAttribute("ingredientesDisponibles", ingredienteDAO.findAll());
-        model.addAttribute("editando", true);
-        return "recetas/crear";
+        model.addAttribute("formBean", formBean);
+        return "recetas/modificar";
     }
 
-    // Guardar edición
+
     @PostMapping("/actualizar")
-    public String actualizarReceta(@ModelAttribute RecetaDTO recetaForm) {
-        Receta nueva = new Receta();
-        nueva.setDescripcion(recetaForm.getDescripcion());
+    public String actualizarReceta(@ModelAttribute("formBean") RecetaDTO formBean, RedirectAttributes redirectAttributes) {
+        try {
+            Receta existente = recetaRepo.findById(formBean.getId()).orElse(null);
+            if (existente == null) {
+                redirectAttributes.addFlashAttribute("error", "Receta no encontrada");
+                return "redirect:/recetas/listar";
+            }
 
-        List<DetalleReceta> detalles = recetaForm.getIngredientes().stream().map(f -> {
-            DetalleReceta dr = new DetalleReceta();
-            dr.setIngrediente(ingredienteDAO.findById(f.getIngredienteId()).orElse(null));
-            dr.setCantidad(f.getCantidad());
-            dr.setCalorias(f.getCalorias());
-            return dr;
-        }).toList();
 
-        nueva.setDetalles(detalles);
-        recetaService.modificarReceta(recetaForm.getId(), nueva);
+            existente.setNombre(formBean.getNombre());
+            existente.setDescripcion(formBean.getDescripcion());
+
+
+            List<DetalleReceta> nuevosDetalles = formBean.getIngredientes().stream().map(f -> {
+                DetalleReceta dr = new DetalleReceta();
+
+                Ingrediente ingrediente = ingredienteDAO.findByNombre(f.getIngredienteNombre())
+                        .orElseGet(() -> {
+                            Ingrediente nuevo = new Ingrediente();
+                            nuevo.setNombre(f.getIngredienteNombre());
+                            return ingredienteDAO.save(nuevo);
+                        });
+
+                dr.setIngrediente(ingrediente);
+                dr.setCantidad(f.getCantidad());
+                dr.setCalorias(f.getCalorias());
+                dr.setReceta(existente);
+
+                return dr;
+            }).collect(Collectors.toList());
+
+
+            existente.getDetalles().clear();
+            existente.getDetalles().addAll(nuevosDetalles);
+
+            recetaRepo.save(existente);
+
+            redirectAttributes.addFlashAttribute("mensaje", "Receta modificada correctamente");
+            return "redirect:/recetas/listar";
+
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Error al actualizar la receta: " + e.getMessage());
+            redirectAttributes.addFlashAttribute("formBean", formBean);
+            return "redirect:/recetas/editar/" + formBean.getId();
+        }
+    }
+
+
+    @GetMapping("/listar")
+    public String listarRecetas(Model model) {
+        List<Receta> recetas = recetaService.listarRecetas();
+
+
+        List<RecetaConCalorias> recetasConCalorias = recetas.stream()
+                .map(r -> new RecetaConCalorias(r, calcularCaloriasTotales(r)))
+                .collect(Collectors.toList());
+
+        model.addAttribute("recetas", recetasConCalorias);
+        return "recetas/listar";
+    }
+
+
+    @GetMapping("/eliminar/{id}")
+    public String eliminarReceta(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+        try {
+            recetaService.eliminarReceta(id);
+            redirectAttributes.addFlashAttribute("mensaje", "Receta eliminada correctamente");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Error al eliminar la receta: " + e.getMessage());
+        }
         return "redirect:/recetas/listar";
     }
 
-    // ----------------------
-    // DTOs
-    // ----------------------
+    @GetMapping("/ver/{id}")
+    public String verReceta(@PathVariable Long id, Model model, RedirectAttributes redirectAttributes) {
+        Receta receta = recetaRepo.findById(id).orElse(null);
+        if (receta == null) {
+            redirectAttributes.addFlashAttribute("error", "Receta no encontrada");
+            return "redirect:/recetas/listar";
+        }
+
+        model.addAttribute("receta", receta);
+        model.addAttribute("caloriasTotales", calcularCaloriasTotales(receta));
+        return "recetas/ver";
+    }
+
+ 
+    @Data
+    public static class RecetaConCalorias {
+        private final Receta receta;
+        private final int caloriasTotales;
+    }
+
+    private int calcularCaloriasTotales(Receta receta) {
+        return receta.getDetalles().stream()
+                .mapToInt(DetalleReceta::getCalorias)
+                .sum();
+    }
+
 
     @Data
     public static class RecetaDTO {
@@ -139,15 +210,8 @@ public class RecetasController {
 
     @Data
     public static class DetalleRecetaDTO {
-        private Long ingredienteId;
+        private String ingredienteNombre;
         private Double cantidad;
         private Integer calorias;
-    }
-
-    @Data
-    public static class RecetaBuscarForm {
-        private String nombre;
-        private Integer minCalorias;
-        private Integer maxCalorias;
     }
 }

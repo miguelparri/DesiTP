@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8" />
-  <title th:text="${titulo}">Modificar Receta</title>
+  <title th:text="${titulo}">Detalle Receta</title>
 
 
   <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.1/mdb.min.css" rel="stylesheet" />
@@ -27,17 +27,6 @@
       margin-top: auto;
     }
 
-
-    .form-control {
-      font-size: 1rem;
-      padding: 0.5rem 0.75rem;
-      min-height: auto;
-    }
-
-    label.form-label {
-      font-size: 1rem;
-    }
-
     .btn {
       font-size: 1rem;
       padding: 0.5rem 1rem;
@@ -45,24 +34,10 @@
     }
 
     @media (max-width: 768px) {
-      .form-control {
-        font-size: 1.6rem !important;
-        padding: 1.5rem 1rem !important;
-        min-height: 4.5rem !important;
-      }
-
-      label.form-label {
-        font-size: 1.5rem !important;
-      }
-
       .btn {
         font-size: 1.6rem !important;
         padding: 1.5rem 2rem !important;
         min-height: 5rem !important;
-      }
-
-      .form-outline {
-        margin-bottom: 2rem !important;
       }
     }
   </style>
@@ -76,57 +51,34 @@
 </nav>
 
 <main class="container mt-5 pt-5">
-  <h2>Modificar Receta</h2>
+  <h2 th:text="'Receta: ' + ${receta.nombre}">Nombre Receta</h2>
 
-  <form th:action="@{/recetas/actualizar}" th:object="${formBean}" method="post">
-    <input type="hidden" th:field="*{id}" />
+  <div class="mb-3">
+    <strong>Descripción:</strong>
+    <p th:text="${receta.descripcion}">Descripción de la receta</p>
+  </div>
 
-    <div class="mb-3">
-      <label>Nombre</label>
-      <input type="text" class="form-control" th:field="*{nombre}" readonly />
-    </div>
-
-    <div class="mb-3">
-      <label>Descripción</label>
-      <textarea class="form-control" th:field="*{descripcion}" rows="3"></textarea>
-    </div>
-
-    <h5>Ingredientes</h5>
-    <table class="table table-bordered" id="tablaIngredientes">
+  <div class="mb-4">
+    <strong>Ingredientes:</strong>
+    <table class="table table-bordered">
       <thead>
         <tr>
           <th>Ingrediente</th>
           <th>Cantidad (kg)</th>
           <th>Calorías</th>
-          <th>Acciones</th>
         </tr>
       </thead>
-      <tbody id="ingredientesBody" th:each="detalle, iterStat : *{ingredientes}">
-        <tr>
-          <td>
-            <input type="text" th:name="'ingredientes[' + ${iterStat.index} + '].ingredienteNombre'" 
-                   th:value="${detalle.ingredienteNombre}" class="form-control" required />
-          </td>
-          <td>
-            <input type="number" step="0.01" min="0" th:name="'ingredientes[' + ${iterStat.index} + '].cantidad'" 
-                   th:value="${detalle.cantidad}" class="form-control" required />
-          </td>
-          <td>
-            <input type="number" min="0" th:name="'ingredientes[' + ${iterStat.index} + '].calorias'" 
-                   th:value="${detalle.calorias}" class="form-control" required />
-          </td>
-          <td>
-            <button type="button" class="btn btn-danger" onclick="eliminarFila(this)">Eliminar</button>
-          </td>
+      <tbody>
+        <tr th:each="detalle : ${receta.detalles}">
+          <td th:text="${detalle.ingrediente.nombre}">Ingrediente</td>
+          <td th:text="${detalle.cantidad}">0.0</td>
+          <td th:text="${detalle.calorias}">0</td>
         </tr>
       </tbody>
     </table>
+  </div>
 
-    <button type="button" class="btn btn-secondary mb-3" onclick="agregarFila()">Agregar Ingrediente</button>
-
-    <button type="submit" class="btn btn-primary">Guardar Cambios</button>
-    <a th:href="@{/recetas/listar}" class="btn btn-secondary ms-2">Cancelar</a>
-  </form>
+  <a th:href="@{/recetas/listar}" class="btn btn-secondary">Volver al listado</a>
 </main>
 
 <footer class="text-center text-lg-start text-white" style="background-color: #1c2331">
@@ -183,30 +135,6 @@
     <a class="text-white" href="https://www.frsf.utn.edu.ar/" target="_blank">frsf.utn.edu.ar</a>
   </div>
 </footer>
-
-<script>
-  let index = /*[[${formBean.ingredientes.size()}]]*/ 1;
-
-  function agregarFila() {
-    const tbody = document.getElementById('ingredientesBody');
-    const nuevaFila = document.createElement('tr');
-
-    nuevaFila.innerHTML = `
-      <td><input type="text" name="ingredientes[${index}].ingredienteNombre" class="form-control" required /></td>
-      <td><input type="number" name="ingredientes[${index}].cantidad" step="0.01" min="0" class="form-control" required /></td>
-      <td><input type="number" name="ingredientes[${index}].calorias" min="0" class="form-control" required /></td>
-      <td><button type="button" class="btn btn-danger" onclick="eliminarFila(this)">Eliminar</button></td>
-    `;
-
-    tbody.appendChild(nuevaFila);
-    index++;
-  }
-
-  function eliminarFila(btn) {
-    const fila = btn.closest('tr');
-    fila.remove();
-  }
-</script>
 
 </body>
 </html>

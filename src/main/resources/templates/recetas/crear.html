@@ -1,102 +1,184 @@
-!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
 <head>
   <meta charset="UTF-8" />
-  <title th:text="${titulo}">Formulario Receta</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <title>Crear Receta</title>
+
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.1/mdb.min.css" rel="stylesheet" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.1/mdb.min.js"></script>
+  <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+
+  <style>
+    html, body {
+      min-height: 100vh;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .content-container {
+      flex: 1;
+      padding-top: 90px;
+      padding-bottom: 40px;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+    }
+
+    .form-wrapper {
+      width: 100%;
+      max-width: 600px;
+      padding: 0 15px;
+    }
+
+    footer {
+      flex-shrink: 0;
+    }
+  </style>
 </head>
+
 <body>
 
-<!-- NAVBAR -->
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
   <div class="container-fluid">
     <a class="navbar-brand" href="#">Gestión ONG</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+      aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav">
+        <li class="nav-item"><a class="nav-link" th:href="@{/}">Menu</a></li>
+        <li class="nav-item"><a class="nav-link" th:href="@{/familias/listado}">Buscar Familias</a></li>
+        <li class="nav-item"><a class="nav-link" th:href="@{/buscarpersonas}">Buscar Personas</a></li>
+        <li class="nav-item"><a class="nav-link" th:href="@{/personas/nueva}">Agregar Personas</a></li>
+        <li class="nav-item"><a class="nav-link" th:href="@{/recetas/nueva}">Crear Receta</a></li>
+        <li class="nav-item"><a class="nav-link" th:href="@{/recetas/listar}">Listar Recetas</a></li>
+      </ul>
+    </div>
   </div>
 </nav>
 
-<!-- FORMULARIO -->
-<div class="container mt-5 pt-5">
-  <h2 th:text="${titulo}">Formulario de Receta</h2>
+<div class="container content-container">
+  <div class="form-wrapper">
+    <h2>Crear Receta</h2>
 
-  <!-- Mensajes -->
-  <div th:if="${mensaje}" class="alert alert-success" th:text="${mensaje}"></div>
-  <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+    <form th:action="@{/recetas/guardar}" th:object="${formBean}" method="post">
+      <input type="hidden" th:field="*{id}" />
 
-  <form th:action="@{/recetas/guardar}" th:object="${formBean}" method="post">
-    <input type="hidden" th:field="*{id}" />
+      <div class="mb-3">
+        <label>Nombre</label>
+        <input type="text" class="form-control" th:field="*{nombre}" required />
+      </div>
 
-    <div class="form-outline mb-4">
-      <input type="text" th:field="*{nombre}" class="form-control" required />
-      <label class="form-label">Nombre de la Receta</label>
-    </div>
+      <div class="mb-3">
+        <label>Descripción</label>
+        <textarea class="form-control" th:field="*{descripcion}" rows="3"></textarea>
+      </div>
 
-    <div class="form-outline mb-4">
-      <textarea th:field="*{descripcion}" class="form-control" rows="4"></textarea>
-      <label class="form-label">Descripción</label>
-    </div>
+      <h5>Ingredientes</h5>
+      <table class="table table-bordered" id="tablaIngredientes">
+        <thead>
+          <tr>
+            <th>Ingrediente</th>
+            <th>Cantidad (kg)</th>
+            <th>Calorías</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody id="ingredientesBody" th:each="detalle, iterStat : *{ingredientes}">
+          <tr>
+            <td><input type="text" th:name="'ingredientes[' + ${iterStat.index} + '].ingredienteNombre'" th:value="${detalle.ingredienteNombre}" class="form-control" required /></td>
+            <td><input type="number" step="0.01" min="0" th:name="'ingredientes[' + ${iterStat.index} + '].cantidad'" th:value="${detalle.cantidad}" class="form-control" required /></td>
+            <td><input type="number" min="0" th:name="'ingredientes[' + ${iterStat.index} + '].calorias'" th:value="${detalle.calorias}" class="form-control" required /></td>
+            <td><button type="button" class="btn btn-danger" onclick="eliminarFila(this)">Eliminar</button></td>
+          </tr>
+        </tbody>
+      </table>
 
-    <!-- INGREDIENTES -->
-    <h5>Ingredientes</h5>
-    <table class="table table-bordered" id="tablaIngredientes">
-      <thead>
-        <tr>
-          <th>Ingrediente</th>
-          <th>Cantidad (kg)</th>
-          <th>Calorías</th>
-          <th>Acciones</th>
-        </tr>
-      </thead>
-      <tbody id="ingredientesBody">
-        <tr>
-          <td>
-            <select class="form-select" name="ingredientes[0].ingredienteId" required>
-              <option value="">Seleccione...</option>
-              <option th:each="ing : ${ingredientes}"
-                      th:value="${ing.id}"
-                      th:text="${ing.nombre}">
-              </option>
-            </select>
-          </td>
-          <td><input type="number" name="ingredientes[0].cantidad" class="form-control" step="0.01" min="0" required /></td>
-          <td><input type="number" name="ingredientes[0].calorias" class="form-control" min="0" required /></td>
-          <td><button type="button" class="btn btn-danger" onclick="eliminarFila(this)">Eliminar</button></td>
-        </tr>
-      </tbody>
-    </table>
-
-    <button type="button" class="btn btn-secondary mb-3" onclick="agregarFila()">Agregar Ingrediente</button>
-
-    <div class="d-flex justify-content-center mb-4">
+      <button type="button" class="btn btn-secondary mb-3" onclick="agregarFila()">Agregar Ingrediente</button>
       <button type="submit" class="btn btn-primary">Guardar Receta</button>
-    </div>
-  </form>
+    </form>
+  </div>
 </div>
 
+<footer class="text-center text-lg-start text-white" style="background-color: #1c2331">
+  <section class="d-flex justify-content-between p-4" style="background-color: #6351ce">
+    <div class="me-5">
+      <a class="text-white" href="https://www.frsf.utn.edu.ar/tuti" target="_blank">Tecnicatura Universitaria en Tecnología de la Información</a>
+    </div>
+    <div>
+      <a href="#" class="text-white me-4"><i class="fab fa-facebook-f"></i></a>
+      <a href="#" class="text-white me-4"><i class="fab fa-twitter"></i></a>
+      <a href="#" class="text-white me-4"><i class="fab fa-google"></i></a>
+      <a href="#" class="text-white me-4"><i class="fab fa-instagram"></i></a>
+      <a href="#" class="text-white me-4"><i class="fab fa-linkedin"></i></a>
+      <a href="#" class="text-white me-4"><i class="fab fa-github"></i></a>
+    </div>
+  </section>
+
+  <section>
+    <div class="container text-center text-md-start mt-5">
+      <div class="row mt-3">
+        <div class="col-md-3 col-lg-4 col-xl-3 mx-auto mb-4">
+          <h6 class="text-uppercase fw-bold">ONG</h6>
+          <hr class="mb-4 mt-0 d-inline-block mx-auto" style="width: 60px; background-color: #7c4dff; height: 2px"/>
+          <p>Trabajo práctico de la UTN realizado por Parra Miguel Ángel y Brian Villalba</p>
+        </div>
+        <div class="col-md-2 col-lg-2 col-xl-2 mx-auto mb-4">
+          <h6 class="text-uppercase fw-bold">Integrantes</h6>
+          <hr class="mb-4 mt-0 d-inline-block mx-auto" style="width: 60px; background-color: #7c4dff; height: 2px"/>
+          <p class="text-white">Parra Miguel Ángel</p>
+          <p class="text-white">Brian Elías Villalba</p>
+        </div>
+        <div class="col-md-3 col-lg-2 col-xl-2 mx-auto mb-4">
+          <h6 class="text-uppercase fw-bold">Links</h6>
+          <hr class="mb-4 mt-0 d-inline-block mx-auto" style="width: 60px; background-color: #7c4dff; height: 2px"/>
+          <p><a href="#" class="text-white">Menu</a></p>
+          <p><a th:href="@{/buscarpersonas}" class="text-white">Personas</a></p>
+          <p><a th:href="@{/familias/listado}" class="text-white">Familias</a></p>
+          <p><a th:href="@{/recetas/listar}" class="text-white">Recetas</a></p>
+        </div>
+        <div class="col-md-4 col-lg-3 col-xl-3 mx-auto mb-4">
+          <h6 class="text-uppercase fw-bold">Contacto</h6>
+          <hr class="mb-4 mt-0 d-inline-block mx-auto" style="width: 60px; background-color: #7c4dff; height: 2px"/>
+          <p><i class="fas fa-home mr-3"></i> Lavaisse 610 - S3004EWB Santa Fe</p>
+          <p><i class="fas fa-envelope mr-3"></i> Parramiguelangel@hotmail.com.ar</p>
+          <p><i class="fas fa-envelope mr-3"></i> briancorreo</p>
+          <p><i class="fas fa-phone mr-3"></i> +54 342 547 6892</p>
+          <p><i class="fas fa-print mr-3"></i> +54 342 506 9163</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="text-center p-3" style="background-color: rgba(0, 0, 0, 0.2)">
+    <a class="text-white" href="https://www.frsf.utn.edu.ar/" target="_blank">frsf.utn.edu.ar</a>
+  </div>
+</footer>
+
 <script>
-  let index = 1;
+  let index = /*[[${formBean.ingredientes.size()}]]*/ 1;
   function agregarFila() {
-    const tabla = document.getElementById('ingredientesBody');
-    const fila = document.createElement('tr');
-    fila.innerHTML = `
-      <td>
-        <select class="form-select" name="ingredientes[${index}].ingredienteId" required>
-          <option value="">Seleccione...</option>
-          [[${#lists.map(ingredientes, i -> '<option value="' + i.id + '">' + i.nombre + '</option>').join('')}]]
-        </select>
-      </td>
-      <td><input type="number" name="ingredientes[${index}].cantidad" class="form-control" step="0.01" min="0" required /></td>
-      <td><input type="number" name="ingredientes[${index}].calorias" class="form-control" min="0" required /></td>
+    const tbody = document.getElementById('ingredientesBody');
+    const nuevaFila = document.createElement('tr');
+    nuevaFila.innerHTML = `
+      <td><input type="text" name="ingredientes[${index}].ingredienteNombre" class="form-control" required /></td>
+      <td><input type="number" name="ingredientes[${index}].cantidad" step="0.01" min="0" class="form-control" required /></td>
+      <td><input type="number" name="ingredientes[${index}].calorias" min="0" class="form-control" required /></td>
       <td><button type="button" class="btn btn-danger" onclick="eliminarFila(this)">Eliminar</button></td>
     `;
-    tabla.appendChild(fila);
+    tbody.appendChild(nuevaFila);
     index++;
   }
 
-  function eliminarFila(boton) {
-    const fila = boton.parentElement.parentElement;
-    fila.remove();
+  function eliminarFila(btn) {
+    btn.closest('tr').remove();
   }
 </script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
 </html>

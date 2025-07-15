@@ -4,30 +4,28 @@
   <meta charset="UTF-8" />
   <title th:text="${titulo}">Buscar Personas</title>
 
-   <!-- Bootstrap CSS -->
+ 
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
 
-  <!-- MDBootstrap CSS -->
   <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.1/mdb.min.css" rel="stylesheet"/>
 
      <style>
-        /* NUEVO: layout para footer fijo al fondo */
         html, body {
-            min-height: 100vh;          /* Para que ocupe todo el alto en móvil */
+            min-height: 100vh;         
             margin: 0;
             display: flex;
             flex-direction: column;
         }
 
         main {
-            flex: 1 0 auto;             /* Main ocupa espacio disponible */
-            padding-top: 70px;          /* Para que no tape el navbar fijo */
-            padding-left: 15px;         /* Padding lateral para móviles */
+            flex: 1 0 auto;             
+            padding-top: 70px;          
+            padding-left: 15px;         
             padding-right: 15px;
         }
 
         footer {
-            flex-shrink: 0;             /* Footer no se encoge */
+            flex-shrink: 0;             
         }
 
         .btn-square {
@@ -66,27 +64,12 @@
 
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav">
-        <li class="nav-item">
-          <a class="nav-link" th:href="@{/}">Menu</a>
-        </li>
-       <li class="nav-item">
-  <a class="nav-link" th:href="@{/familias/listado}">Buscar Familias</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" th:href="@{/buscarpersonas}">Buscar Personas</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" th:href="@{/personas/nueva}">Agregar Personas</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" th:href="@{/recetas/crear}">Crear Receta</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" th:href="@{/recetas/listar}">Listar Recetas</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" th:href="@{/recetas/modificar}">Modificar Receta</a>
-        </li>
+        <li class="nav-item"><a class="nav-link" th:href="@{/}">Menu</a></li>
+        <li class="nav-item"><a class="nav-link" th:href="@{/familias/listado}">Buscar Familias</a></li>
+        <li class="nav-item"><a class="nav-link" th:href="@{/buscarpersonas}">Buscar Personas</a></li>
+        <li class="nav-item"><a class="nav-link" th:href="@{/personas/nueva}">Agregar Personas</a></li>
+        <li class="nav-item"><a class="nav-link" th:href="@{/recetas/nueva}">Crear Receta</a></li>
+        <li class="nav-item"><a class="nav-link" th:href="@{/recetas/listar}">Listar Recetas</a></li>
       </ul>
     </div>
   </div>
